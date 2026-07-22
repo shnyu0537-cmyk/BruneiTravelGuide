@@ -1,71 +1,95 @@
-const spreads = document.querySelectorAll(".spread");
-const prevBtn = document.getElementById("prev");
-const nextBtn = document.getElementById("next");
-const pageNumber = document.getElementById("pageNumber");
+const pages = document.querySelectorAll(".page");
 
 let current = 0;
 
 function showPage(index) {
 
-    if (index < 0 || index >= spreads.length) return;
+    if (index < 0 || index >= pages.length) return;
 
-    spreads[current].classList.remove("active");
+    pages[current].classList.remove("active");
 
     current = index;
 
-    spreads[current].classList.add("active");
-
-    pageNumber.textContent = `${current + 1} / ${spreads.length}`;
-
-    prevBtn.disabled = current === 0;
-    nextBtn.disabled = current === spreads.length - 1;
-
-    prevBtn.style.opacity = current === 0 ? 0.4 : 1;
-    nextBtn.style.opacity = current === spreads.length - 1 ? 0.4 : 1;
+    pages[current].classList.add("active");
 }
 
-prevBtn.addEventListener("click", () => {
-    showPage(current - 1);
-});
+// --------------------
+// タップ
+// --------------------
 
-nextBtn.addEventListener("click", () => {
-    showPage(current + 1);
-});
+document.getElementById("book").addEventListener("click", (e) => {
 
-// スワイプ対応
-let startX = 0;
+    const x = e.clientX;
 
-document.getElementById("book").addEventListener("touchstart", e => {
-    startX = e.touches[0].clientX;
-});
+    if (x < window.innerWidth / 2) {
 
-document.getElementById("book").addEventListener("touchend", e => {
-
-    const endX = e.changedTouches[0].clientX;
-    const diff = endX - startX;
-
-    if (Math.abs(diff) < 50) return;
-
-    if (diff < 0) {
-        showPage(current + 1);
-    } else {
         showPage(current - 1);
+
+    } else {
+
+        showPage(current + 1);
+
     }
 
 });
 
-// キーボード対応（PC確認用）
-document.addEventListener("keydown", e => {
+// --------------------
+// スワイプ
+// --------------------
+
+let startX = 0;
+let startY = 0;
+
+const book = document.getElementById("book");
+
+book.addEventListener("touchstart", (e) => {
+
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+
+});
+
+book.addEventListener("touchend", (e) => {
+
+    const dx = e.changedTouches[0].clientX - startX;
+    const dy = e.changedTouches[0].clientY - startY;
+
+    // 縦スクロールは無視
+    if (Math.abs(dy) > Math.abs(dx)) return;
+
+    if (Math.abs(dx) < 50) return;
+
+    if (dx < 0) {
+
+        showPage(current + 1);
+
+    } else {
+
+        showPage(current - 1);
+
+    }
+
+});
+
+// --------------------
+// キーボード（PC確認用）
+// --------------------
+
+document.addEventListener("keydown", (e) => {
 
     if (e.key === "ArrowRight") {
+
         showPage(current + 1);
+
     }
 
     if (e.key === "ArrowLeft") {
+
         showPage(current - 1);
+
     }
 
 });
 
-// 初期化
+// 初期表示
 showPage(0);
