@@ -1,3 +1,5 @@
+console.log(window.innerWidth);
+console.log(isMobile);
 const book = document.getElementById("book");
 
 const isMobile = window.innerWidth < 768;
